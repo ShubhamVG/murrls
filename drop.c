@@ -51,4 +51,4 @@ void drawDrop(Drop drop) {
     DrawTriangleFan(drop.vertices, drop.vcount, drop.color);
 }
 
-void marbleDrop(Drop *drop_ptr, Vector2 center) { /* TODO */};
+void marbleDrop(Drop *drop_ptr, Vector2 center) { /* TODO */}
