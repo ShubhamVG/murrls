@@ -1,5 +1,8 @@
 #include <raylib.h>
 #include <stddef.h>
+#include <stdlib.h>
+#include <math.h>
+#include <raymath.h>
 
 typedef struct {
   Vector2 *vertices;
@@ -18,17 +21,48 @@ typedef struct {
  *
  * @return Heap allocated pointer of the created Drop.
  */
-Drop *circularDrop(Vector2 center, float radius, size_t vcount, Color color);
+Drop circularDrop(Vector2 center, float radius, size_t vcount, Color color) {
+    Drop drop;
+    drop.vcount = vcount;
+    drop.color = color;
+
+    drop.vertices = malloc(sizeof(Vector2) * vcount);
+
+    if (drop.vertices == NULL) {
+        drop.vcount = 0;
+        return drop;
+    }
+
+    float d_theta = 2 * PI / (float) vcount;
+
+    for (size_t i = 0; i < vcount; i++) {
+        const float theta = d_theta * (float) i;
+        const float x = radius * cosf(theta);
+        const float y = radius * sinf(theta);
+
+        const Vector2 v = {.x = x, .y = y};
+        const Vector2 v_offsetted = Vector2Add(v, center);
+
+        drop.vertices[vcount - i - 1] = v_offsetted;
+    }
+
+    return drop;
+}
 
 /**
  * Free any resources allocated by the drop.
  *
  * @param drop The input drop structure to be destroyed.
  */
-void destroyDrop(Drop drop);
+void destroyDrop(Drop drop) {
+    if (drop.vertices != NULL) {
+        free(drop.vertices);
+    }
+}
 
-// NOTE: Using TriangleFan might be the easiest way to draw this.
-void drawDrop(Drop drop);
+void drawDrop(Drop drop) {
+    DrawTriangleFan(drop.vertices, drop.vcount, drop.color);
+}
 
 /**
  * Marble the input drop given a center. Using this equation:
