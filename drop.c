@@ -45,7 +45,20 @@ void drawDrop(Drop drop) {
     DrawTriangleFan(drop.vertices, drop.vcount, drop.color);
 }
 
-void marbleDrop(Drop *drop_ptr, Vector2 center) {
-    /* TODO */
+void marbleDrop(Drop *drop_ptr, Vector2 center, size_t r) {
+    // p = c + (p - c) * sqrt(1 + r^2 / (p - c)^2)
+    for (size_t i = 0; i < drop_ptr->vcount; i++) {
+        Vector2 p = drop_ptr->vertices[i];
 
+        // p - c 
+        Vector2 diff = Vector2Subtract(p, center);
+        // || p - c || ^ 2
+        float diff_sqr =  Vector2LengthSqr(diff);
+        // sqrt(1 + r^2 / (p - c)^2)
+        float factor = sqrtf(1.0f + (r * r) / diff_sqr);
+        // (p - c) * sqrt(1 + r^2 / (p - c)^2)
+        Vector2 scaled = Vector2Scale(diff, factor);
+        // p = c + (p - c) * sqrt(1 + r^2 / (p - c)^2)
+        drop_ptr->vertices[i] = Vector2Add(center, scaled);
+    }
 }

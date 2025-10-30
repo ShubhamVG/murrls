@@ -41,4 +41,4 @@ void drawDrop(Drop drop);
  *
  * @param drop_ptr Pointer of the drop to be marbled.
  */
-void marbleDrop(Drop *drop, Vector2 center);
+void marbleDrop(Drop *drop, Vector2 center, size_t r);
