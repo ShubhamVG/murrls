@@ -3,7 +3,7 @@ CC := clang
 CFLAGS := -O3 -Wall
 
 # Source and out files specific
-SRC := main.c
+SRC := main.c drop.c
 OBJ := $(SRC:.c=.o)
 TARGET := murrls
 

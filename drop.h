@@ -25,7 +25,7 @@ Drop circularDrop(Vector2 center, float radius, size_t vcount, Color color);
  *
  * @param drop The input drop structure to be destroyed.
  */
-void destroyDrop(Drop *drop);
+void destroyDrop(Drop drop);
 
 /**
   * Draw the drop.

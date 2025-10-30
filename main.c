@@ -27,9 +27,9 @@ int main(void) {
     DrawFPS(SCRN_WIDTH - 100, 10);
     
 
-    // Drop drop = circularDrop(SCRN_CENTER, 50, 10, BLUE);
-    // drawDrop(drop);
-    // destroyDrop(drop);
+    Drop drop = circularDrop(SCRN_CENTER, 50, 10, BLUE);
+    drawDrop(drop);
+    destroyDrop(drop);
 
     EndDrawing();
   }

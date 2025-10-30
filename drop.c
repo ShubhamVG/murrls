@@ -6,12 +6,6 @@
 
 #include "drop.h"
 
-typedef struct {
-  Vector2 *vertices;
-  size_t vcount;
-  Color color;
-} Drop;
-
 
 Drop circularDrop(Vector2 center, float radius, size_t vcount, Color color) {
     Drop drop;
@@ -51,4 +45,7 @@ void drawDrop(Drop drop) {
     DrawTriangleFan(drop.vertices, drop.vcount, drop.color);
 }
 
-void marbleDrop(Drop *drop_ptr, Vector2 center) { /* TODO */}
+void marbleDrop(Drop *drop_ptr, Vector2 center) {
+    /* TODO */
+
+}
