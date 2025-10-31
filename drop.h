@@ -2,9 +2,9 @@
 #include <stddef.h>
 
 typedef struct {
-  Vector2 *vertices;
-  size_t vcount;
-  Color color;
+    Vector2 *vertices;  // the array of vertex points making up the drop shape
+    size_t vcount;      // how many vertices the shape has
+    Color color;        // color of the drop
 } Drop;
 
 /**
@@ -18,7 +18,7 @@ typedef struct {
  *
  * @return Heap allocated pointer of the created Drop.
  */
-Drop *circularDrop(Vector2 center, float radius, size_t vcount, Color color);
+Drop circularDrop(Vector2 center, float radius, size_t vcount, Color color);
 
 /**
  * Free any resources allocated by the drop.
@@ -27,7 +27,11 @@ Drop *circularDrop(Vector2 center, float radius, size_t vcount, Color color);
  */
 void destroyDrop(Drop drop);
 
-// NOTE: Using TriangleFan might be the easiest way to draw this.
+/**
+  * Draw the drop.
+  *
+  * @param drop The input drop to be drawen.
+ */
 void drawDrop(Drop drop);
 
 /**
@@ -37,4 +41,4 @@ void drawDrop(Drop drop);
  *
  * @param drop_ptr Pointer of the drop to be marbled.
  */
-void marbleDrop(Drop *drop_ptr, Vector2 center);
+void marbleDrop(Drop *drop, Vector2 center, size_t r);
