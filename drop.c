@@ -60,3 +60,19 @@ void marbleDrop(Drop drop, Vector2 c, float r) {
         drop.vertices[i] = Vector2Add(c, scaled);
     }
 }
+
+void tineDrop(Drop drop, Vector2 bv, Vector2 mv, float z, float c) {
+    float u = 1.f / pow(2.f, 1.f / c);
+    Vector2 Nv = Vector2Normalize(Vector2Rotate(mv, PI / 2.0f));
+
+    for (size_t i = 0; i < drop.vcount; i ++) {
+        Vector2 pv = drop.vertices[i];
+        Vector2 PBv = Vector2Subtract(pv, bv);
+
+        float d = fabsf(Vector2DotProduct(PBv, Nv));
+
+        float mag = z * powf(u, d);
+
+        drop.vertices[i] = Vector2Add(pv, Vector2Scale(mv, mag));
+    }
+}
