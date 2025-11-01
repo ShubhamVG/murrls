@@ -7,7 +7,7 @@ and decided to code something today xD
 ## TODO
 
 - [x] Ink drop
-- [ ] Tine line
+- [x] Tine line
 - [ ] A mode to switch between the two (both keyboard & GUI buttons)
 - [ ] Colors
 - [ ] Add example GIF in README.md
