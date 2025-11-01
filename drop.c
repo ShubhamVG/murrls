@@ -3,6 +3,7 @@
 #include <raymath.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "drop.h"
 
@@ -58,5 +59,25 @@ void marbleDrop(Drop drop, Vector2 c, float r) {
         Vector2 scaled = Vector2Scale(diff, factor);
         // p = c + (p - c) * sqrt(1 + r^2 / (p - c)^2)
         drop.vertices[i] = Vector2Add(c, scaled);
+    }
+}
+
+void tineDrop(Drop drop, Vector2 bv, Vector2 mv, float z, float c) {
+    for (size_t i = 0; i < drop.vcount; i ++) {
+        Vector2 p = drop.vertices[i];
+        // pv = pv + z * (u ^ d) * mv
+        // u = 1 / 2 ^ (1 / c)
+
+        // gpt wrote this btw, not me, i didnt get what was written in the .h
+        Vector2 diff = Vector2Subtract(p, bv);
+        float dist_sqr = Vector2LengthSqr(diff);
+
+        float factor = z / powf(dist_sqr, c * 0.5f);
+
+        Vector2 tine_dir = Vector2Normalize(Vector2Subtract(mv, bv));
+
+        Vector2 displacement = Vector2Scale(tine_dir, factor);
+        
+        drop.vertices[i] = Vector2Add(p, displacement);
     }
 }
