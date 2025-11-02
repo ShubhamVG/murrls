@@ -1,7 +1,6 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -20,10 +19,16 @@ const size_t DROP_SIDES = 600;
 const int INP_TYPE_DROPPING = 0;
 const int INP_TYPE_TINE = 1;
 
+typedef struct {
+    Drop *drops;
+    size_t drop_count;
+    Vector2 start;
+    Vector2 end;
+} DropHandler;
+
 void handleInpTypeToggle(int* inp_type);
-void handleDropping(const int inp_type, Drop* drops, size_t* drop_count_ptr);
-void handleTine(const int inp_type, bool* start_has_selected, Vector2* start,
-                Vector2* end, Drop* drops, size_t drop_count);
+void handleDropping(const int inp_type, DropHandler *handler);
+void handleTine(const int inp_type, bool* is_start_selected_ptr, DropHandler *handler);
 
 int main(void) {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -35,31 +40,24 @@ int main(void) {
     int inp_type = INP_TYPE_DROPPING;
 
     bool is_start_selected = false;
-    Vector2 start;
-    Vector2 end;
 
-    // for (size_t i = 10; i > 0; i--) {
-    //     const float radius = 20.0 * (float)i;
-    //     // const float hue = (float)GetRandomValue(0, 360);
-    //     const Color color = ColorFromHSV(200, 1.0f, 0.5f);
-    //     drops[10 - i] = circularDrop(SCRN_CENTER, radius, DROP_SIDES, color);
-    //     drop_count++;
-    // }
+    DropHandler handler;
+    handler.drops = drops;
+    handler.drop_count = drop_count;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
 
         handleInpTypeToggle(&inp_type);
-        handleDropping(inp_type, drops, &drop_count);
-        handleTine(inp_type, &is_start_selected, &start, &end, drops,
-                   drop_count);
-
+        
+        handleDropping(inp_type, &handler);
+        handleTine(inp_type, &is_start_selected, &handler);
         ClearBackground(RAYWHITE);
         DrawFPS(SCRN_WIDTH - 100, 10);
 
         // draw all of the drops
-        for (size_t i = 0; i < drop_count; i++) {
-            drawDrop(drops[i]);
+        for (size_t i = 0; i < handler.drop_count; i++) {
+            drawDrop(handler.drops[i]);
         }
 
         EndDrawing();
@@ -67,7 +65,7 @@ int main(void) {
 
     // free the memory
     for (size_t i = 0; i < drop_count - 1; i++) {
-        destroyDrop(drops[i]);
+        destroyDrop(handler.drops[i]);
     }
 
     CloseWindow();
@@ -81,30 +79,28 @@ void handleInpTypeToggle(int* inp_type) {
     }
 }
 
-void handleDropping(const int inp_type, Drop* drops, size_t* drop_count_ptr) {
+void handleDropping(const int inp_type, DropHandler *handler) {
     if (inp_type != INP_TYPE_DROPPING ||
         !IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ||
-        *drop_count_ptr >= MAX_DROPS) {
+        handler->drop_count >= MAX_DROPS) {
         return;
     }
 
     Vector2 mouse = GetMousePosition();
 
     // modify all of the other drops before adding
-    for (size_t i = 0; i < *drop_count_ptr; i++) {
-        marbleDrop(drops[i], mouse, DROP_RADIUS);
+    for (size_t i = 0; i < handler->drop_count; i++) {
+        marbleDrop(handler->drops[i], mouse, DROP_RADIUS);
     }
 
     const float hue = (float)GetRandomValue(0, 360);
     const Color color = ColorFromHSV(hue, 1.f, 1.f);
-    drops[*drop_count_ptr] =
+    handler->drops[handler->drop_count] =
         circularDrop(mouse, DROP_RADIUS, DROP_SIDES, color);
-    (*drop_count_ptr)++;
+    (handler->drop_count)++;
 }
 
-void handleTine(const int inp_type, bool* is_start_selected_ptr,
-                Vector2* start_ptr, Vector2* end_ptr, Drop* drops,
-                size_t drop_count) {
+void handleTine(const int inp_type, bool* is_start_selected_ptr, DropHandler *handler) {
     if (inp_type != INP_TYPE_TINE) {
         return;
     }
@@ -116,17 +112,17 @@ void handleTine(const int inp_type, bool* is_start_selected_ptr,
     }
 
     if (*is_start_selected_ptr) {
-        *end_ptr = GetMousePosition();
+        handler->end = GetMousePosition();
         *is_start_selected_ptr = false;
 
-        for (size_t i = 0; i < drop_count; i++) {
-            const Vector2 mv = Vector2Subtract(*end_ptr, *start_ptr);
-            for (size_t i = 0; i < drop_count; i++) {
-                tineDrop(drops[i], *start_ptr, mv, 0.01f, 15.0f);
+        for (size_t i = 0; i < handler->drop_count; i++) {
+            const Vector2 mv = Vector2Subtract(handler->end, handler->start);
+            for (size_t i = 0; i < handler->drop_count; i++) {
+                tineDrop(handler->drops[i], handler->start, mv, 0.01f, 15.0f);
             }
         }
     } else {
-        *start_ptr = GetMousePosition();
+        handler->start = GetMousePosition();
         *is_start_selected_ptr = true;
     }
 }
