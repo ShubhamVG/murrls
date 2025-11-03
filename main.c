@@ -22,13 +22,14 @@ const int INP_TYPE_TINE = 1;
 typedef struct {
     Drop *drops;
     size_t drop_count;
+    bool has_tine_started;
     Vector2 start;
     Vector2 end;
 } DropHandler;
 
 void handleInpTypeToggle(int* inp_type);
 void handleDropping(const int inp_type, DropHandler *handler);
-void handleTine(const int inp_type, bool* is_start_selected_ptr, DropHandler *handler);
+void handleTine(const int inp_type, DropHandler *handler);
 
 int main(void) {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -39,11 +40,12 @@ int main(void) {
     size_t drop_count = 0;
     int inp_type = INP_TYPE_DROPPING;
 
-    bool is_start_selected = false;
+    // bool is_start_selected = false;
 
     DropHandler handler;
     handler.drops = drops;
     handler.drop_count = drop_count;
+    handler.has_tine_started = false;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -51,7 +53,7 @@ int main(void) {
         handleInpTypeToggle(&inp_type);
         
         handleDropping(inp_type, &handler);
-        handleTine(inp_type, &is_start_selected, &handler);
+        handleTine(inp_type, &handler);
         ClearBackground(RAYWHITE);
         DrawFPS(SCRN_WIDTH - 100, 10);
 
@@ -100,20 +102,20 @@ void handleDropping(const int inp_type, DropHandler *handler) {
     (handler->drop_count)++;
 }
 
-void handleTine(const int inp_type, bool* is_start_selected_ptr, DropHandler *handler) {
+void handleTine(const int inp_type, DropHandler *handler) {
     if (inp_type != INP_TYPE_TINE) {
         return;
     }
 
     if (IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
-        *is_start_selected_ptr = false;
+        handler->has_tine_started = false;
     } else if (!IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         return;
     }
 
-    if (*is_start_selected_ptr) {
+    if (handler->has_tine_started) {
         handler->end = GetMousePosition();
-        *is_start_selected_ptr = false;
+        handler->has_tine_started = false;
 
         for (size_t i = 0; i < handler->drop_count; i++) {
             const Vector2 mv = Vector2Subtract(handler->end, handler->start);
@@ -123,6 +125,6 @@ void handleTine(const int inp_type, bool* is_start_selected_ptr, DropHandler *ha
         }
     } else {
         handler->start = GetMousePosition();
-        *is_start_selected_ptr = true;
+        handler->has_tine_started = true;
     }
 }
