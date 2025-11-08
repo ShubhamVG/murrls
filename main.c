@@ -3,7 +3,6 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -302,8 +301,13 @@ void handleUIBtnInputs(AppHandler* handler_ptr) {
 
     if (CheckCollisionPointRec(mouse_pos, COLOR_PICKER_RECT)) {
         const Image scrn_img = LoadImageFromScreen();
+        const float frac_x = mouse_pos.x / 1200.f;
+        const float frac_y = mouse_pos.y / 900.f;
+
+        const int pix_x = (int)(frac_x * scrn_img.width);
+        const int pix_y = (int)(frac_y * scrn_img.height);
         const Color color =
-            GetImageColor(scrn_img, (int)mouse_pos.x, (int)mouse_pos.y);
+            GetImageColor(scrn_img, pix_x, pix_y);
         handler_ptr->use_random_colors = false;
         handler_ptr->selected_color = color;
         UnloadImage(scrn_img);
@@ -335,5 +339,4 @@ void resetCanvas(AppHandler* handler_ptr) {
         destroyDrop(handler_ptr->drops[i]);
     }
     handler_ptr->drop_count = 0;
-    printf("~\n");
 }
