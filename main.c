@@ -310,6 +310,7 @@ void handleUIBtnInputs(AppHandler* handler_ptr) {
             GetImageColor(scrn_img, pix_x, pix_y);
         handler_ptr->use_random_colors = false;
         handler_ptr->selected_color = color;
+        handler_ptr->inp_type = INP_TYPE_DROPPING;
         UnloadImage(scrn_img);
     }
 
