@@ -12,3 +12,9 @@ and decided to code something today xD
 - [x] Some GUI buttons
 - [x] Colors
 - [x] Add example GIF in README.md
+
+Marblind drops:
+![drops marbled](./assets/drops_marbled.png)
+
+Tine drops:
+![tine drops](./assets/tine.png)
