@@ -76,6 +76,13 @@ const Rectangle RAND_COLORS_BTN_RECT = {
     .height = BTN_HEIGHT,
 };
 
+static const Rectangle SCREEN_RECT = {
+    .x = 0.f,
+    .y = 0.f,
+    .width = CANVAS_RECT.width + PANEL_WIDTH,
+    .height = CANVAS_RECT.height,
+};
+
 typedef struct {
     int inp_type;
     Drop* drops;
@@ -97,12 +104,9 @@ void handleUIBtnInputs(AppHandler* handler_ptr);
 void resetCanvas(AppHandler* handler_ptr);
 
 int main(void) {
-    const int SCRN_WIDTH = (int)(CANVAS_RECT.width + PANEL_WIDTH);
-    const int SCRN_HEIGHT = (int)(CANVAS_RECT.height);
-
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetTargetFPS(60);
-    InitWindow(SCRN_WIDTH, SCRN_HEIGHT, "murrls");
+    InitWindow((int)SCREEN_RECT.width, (int)SCREEN_RECT.height, "murrls");
 
     Drop drops[MAX_DROPS];
 
@@ -119,7 +123,7 @@ int main(void) {
         handleTine(&handler);
 
         ClearBackground(RAYWHITE);
-        DrawFPS(SCRN_WIDTH - 100, 10);
+        DrawFPS((int)SCREEN_RECT.width - 100, 10);
 
         drawDrops(&handler);
         drawComponents(&handler);
@@ -142,9 +146,9 @@ Color colorFromHSL(const float h, const float s, const float l) {
 }
 
 void drawComponents(AppHandler* handler_ptr) {
-    // NOTE: Canvas need not be drawn but if it is drawn, then drawDrop
-    // functions must be drawn right after it ane before the draw other
-    // components, otherwise the drops will be over the components
+    // NOTE: Canvas need not be drawn but if it is drawn, then the drops must
+    // drawn right after it ane before the draw other components, otherwise the
+    // drops will be over the components
 
     // Color Wheel
     const float DELTA_HUE = 360.f / (float)COLOR_PICKER_RECT.width;
@@ -301,13 +305,13 @@ void handleUIBtnInputs(AppHandler* handler_ptr) {
 
     if (CheckCollisionPointRec(mouse_pos, COLOR_PICKER_RECT)) {
         const Image scrn_img = LoadImageFromScreen();
-        const float frac_x = mouse_pos.x / 1200.f;
-        const float frac_y = mouse_pos.y / 900.f;
+        const float frac_x = mouse_pos.x / SCREEN_RECT.width;
+        const float frac_y = mouse_pos.y / SCREEN_RECT.height;
 
         const int pix_x = (int)(frac_x * scrn_img.width);
         const int pix_y = (int)(frac_y * scrn_img.height);
-        const Color color =
-            GetImageColor(scrn_img, pix_x, pix_y);
+        const Color color = GetImageColor(scrn_img, pix_x, pix_y);
+
         handler_ptr->use_random_colors = false;
         handler_ptr->selected_color = color;
         handler_ptr->inp_type = INP_TYPE_DROPPING;
