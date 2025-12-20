@@ -9,3 +9,8 @@ Marbled drops:
 
 Tine drops:
 ![Tine drops](./assets/tine.png)
+
+## Name origin
+
+It is like marble + balls = marlls but that for whatever reason wasn't good
+enough for Dana so she "meowified" it and that's how _murrls_ was decided.
